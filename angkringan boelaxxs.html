@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Angkringan Boelaxxxs</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- ROOT VARIABEL --- */
+        :root {
+            --bg-color: #fdfbf7;
+            --primary-dark: #2d1b18; 
+            --primary-brown: #3e2723;
+            --accent-gold: #c5a065;
+            --accent-light: #e6dace;
+            --shadow-soft: 0 10px 40px -10px rgba(62, 39, 35, 0.08);
+            --shadow-hover: 0 20px 50px -10px rgba(62, 39, 35, 0.15);
+            --wa-green: #25D366;
+        }
+
+        /* --- GLOBAL RESET --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(197, 160, 101, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(62, 39, 35, 0.05) 0%, transparent 50%);
+            color: var(--primary-dark);
+            overflow-x: hidden;
+        }
+
+        /* --- MOBILE HEADER (BARU: Muncul hanya di HP) --- */
+        .mobile-header {
+            display: none; /* Hidden on Desktop */
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            background: rgba(62, 39, 35, 0.98);
+            backdrop-filter: blur(15px);
+            z-index: 1001;
+            align-items: center; justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .mobile-logo {
+            color: #fff; font-family: 'Playfair Display', serif; font-size: 1.2rem;
+        }
+        .mobile-logo span { color: var(--accent-gold); font-style: italic; }
+
+        .menu-toggle-btn {
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+            background: transparent; border: none; cursor: pointer;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0; height: 100vh; width: 280px;
+            background: rgba(62, 39, 35, 0.98); /* Sedikit lebih gelap */
+            backdrop-filter: blur(20px);
+            padding: 2.5rem 2rem;
+            display: flex; flex-direction: column;
+            z-index: 1002;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Tombol Close di dalam sidebar (untuk HP) */
+        .close-sidebar-btn {
+            display: none;
+            position: absolute; top: 20px; right: 20px;
+            color: #fff; font-size: 1.5rem; background: none; border: none;
+        }
+
+        .logo-area {
+            text-align: center; margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem; color: var(--accent-gold); margin-bottom: 10px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif; color: #fff; font-size: 1.6rem;
+            line-height: 1.2; letter-spacing: 0.5px;
+        }
+        
+        .logo-text span { color: var(--accent-gold); font-style: italic; }
+
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+        
+        .nav-link {
+            text-decoration: none; color: rgba(255,255,255,0.6);
+            padding: 14px 20px; border-radius: 16px;
+            display: flex; align-items: center; gap: 15px;
+            font-weight: 500; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff; transform: translateX(8px);
+            border-color: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(90deg, rgba(197, 160, 101, 0.25), transparent);
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        /* OVERLAY (Background hitam saat menu terbuka di HP) */
+        .menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1001;
+            display: none; opacity: 0; transition: 0.3s;
+            backdrop-filter: blur(3px);
+        }
+        .menu-overlay.active { display: block; opacity: 1; }
+
+        /* --- MAIN CONTENT AREA --- */
+        .main-wrapper {
+            margin-left: 280px; padding: 2rem 3rem;
+            min-height: 100vh; width: calc(100% - 280px);
+            transition: 0.3s;
+        }
+
+        /* HERO SECTION (UPDATED: FOTO BACKGROUND) */
+        .hero-banner {
+            /* UPDATE DISINI: Menggunakan URL Gambar + Overlay Hitam */
+            background-image: 
+                linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(45, 27, 24, 0.8)),
+                url('https://cdn.odzre.my.id/ln2.jpg'); 
+            background-size: cover;
+            background-position: center;
+            border-radius: 30px;
+            padding: 4rem 3rem; /* Padding lebih besar */
+            color: #fff;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(62, 39, 35, 0.3);
+            animation: fadeInDown 1s ease;
+            text-align: left;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 15px;
+            z-index: 2; position: relative;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .hero-subtitle {
+            opacity: 0.9; font-size: 1.1rem; max-width: 600px; z-index: 2; position: relative;
+            font-weight: 300; line-height: 1.6;
+        }
+
+        /* MENU GRID SYSTEM */
+        .section-title {
+            font-family: 'Playfair Display', serif; font-size: 2rem;
+            margin-bottom: 1.5rem; color: var(--primary-dark);
+            display: flex; align-items: center; gap: 15px;
+        }
+        
+        .section-title::after {
+            content: ''; flex-grow: 1; height: 1px;
+            background: linear-gradient(to right, rgba(62,39,35,0.2), transparent);
+        }
+
+        .menu-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px; margin-bottom: 4rem;
+        }
+        
+        .menu-grid.active { display: grid; }
+
+        /* MODERN CARD CARD */
+        .food-card {
+            background: #fff; border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative; border: 1px solid rgba(0,0,0,0.03);
+            display: flex; flex-direction: column;
+        }
+
+        .food-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-img-box {
+            height: 180px; width: 100%; overflow: hidden; position: relative;
+        }
+        
+        .card-img-box img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        
+        .food-card:hover img { transform: scale(1.1); }
+
+        .badge-best {
+            position: absolute; top: 15px; left: 15px;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px);
+            padding: 5px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 700; color: #d32f2f;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 5px;
+            z-index: 10;
+        }
+
+        .card-details { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .menu-name {
+            font-size: 1.1rem; font-weight: 700; color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+        
+        .menu-rating {
+            color: #ffc107; font-size: 0.8rem; margin-bottom: 15px;
+        }
+
+        .price-row {
+            margin-top: auto; display: flex; align-items: center; justify-content: space-between;
+        }
+        
+        .price { font-size: 1.1rem; font-weight: 700; color: var(--accent-gold); }
+        
+        .btn-add {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--primary-brown); color: #fff;
+            border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        
+        .btn-add:hover { background: var(--accent-gold); transform: rotate(90deg); }
+
+        /* PAYMENT & MAP CARDS */
+        .info-card {
+            background: #fff; padding: 2.5rem; border-radius: 30px;
+            box-shadow: var(--shadow-soft); border: 1px solid rgba(0,0,0,0.03);
+            margin-bottom: 3rem;
+        }
+
+        .method-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; margin-top: 2rem;
+        }
+
+        .method-item {
+            border: 2px solid #f0f0f0; border-radius: 20px; padding: 1.5rem;
+            text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        
+        .method-item:hover {
+            border-color: var(--accent-gold); background: #fffbf2;
+            transform: translateY(-5px);
+        }
+
+        /* MAP FRAME */
+        .map-frame {
+            border-radius: 24px; overflow: hidden; height: 350px; width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: 20px;
+        }
+
+        /* --- FLOATING WHATSAPP BUTTON --- */
+        .float-wa {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 65px; height: 65px;
+            background-color: var(--wa-green); color: #fff;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; text-decoration: none;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+            z-index: 9999;
+            transition: all 0.3s ease;
+            animation: pulseBtn 2s infinite;
+        }
+
+        .float-wa:hover { transform: scale(1.1); box-shadow: 0 15px 35px rgba(37, 211, 102, 0.6); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
+
+        /* --- MOBILE RESPONSIVE UPDATED --- */
+        @media (max-width: 992px) {
+            /* Tampilkan Header Mobile */
+            .mobile-header { display: flex; }
+
+            /* Sidebar Disembunyikan (Off-Canvas) */
+            .sidebar {
+                left: -300px; /* Sembunyi di kiri */
+                width: 280px;
+                box-shadow: none;
+                flex-direction: column;
+                justify-content: flex-start;
+                padding-top: 60px;
+            }
+
+            /* Class untuk memunculkan sidebar */
+            .sidebar.active {
+                left: 0;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+            }
+
+            .close-sidebar-btn { display: block; } /* Munculkan tombol close */
+
+            /* Main Content menyesuaikan ada Header */
+            .main-wrapper { 
+                margin-left: 0; 
+                width: 100%; 
+                padding: 1.5rem; 
+                padding-top: 100px; /* Jarak dari header */
+            }
+            
+            /* Logo di sidebar disembunyikan di HP karena sudah ada di header */
+            .sidebar .logo-area { display: none; }
+
+            .nav-menu {
+                flex-direction: column; /* Kembali vertikal di sidebar */
+                position: relative; top: 0; left: 0; width: 100%;
+                background: transparent; box-shadow: none; padding: 0;
+            }
+
+            .nav-link { 
+                color: rgba(255,255,255,0.7); 
+                border: 1px solid transparent;
+            }
+            
+            .nav-link.active {
+                background: rgba(197, 160, 101, 0.2);
+                border-left: 4px solid var(--accent-gold);
+                color: #fff;
+            }
+
+            /* Adjust Hero Banner */
+            .hero-banner { 
+                padding: 3rem 1.5rem; 
+                border-radius: 20px; 
+                text-align: center;
+            }
+            .hero-title { font-size: 2rem; }
+            
+            .menu-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .card-img-box { height: 130px; }
+            .card-details { padding: 1rem; }
+            .menu-name { font-size: 0.95rem; }
+            .price { font-size: 1rem; }
+            .btn-add { width: 32px; height: 32px; font-size: 0.8rem; }
+            
+            .float-wa { width: 55px; height: 55px; bottom: 20px; right: 20px; font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+
+    <div class="mobile-header">
+        <div class="mobile-logo">Angkringan <span>Boelaxxxs</span></div>
+        <button class="menu-toggle-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i> </button>
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <button class="close-sidebar-btn" onclick="toggleMenu()"><i class="fas fa-times"></i></button>
+        
+        <div class="logo-area">
+            <i class="fas fa-mug-hot logo-icon"></i>
+            <div class="logo-text">Angkringan<br><span>Boelaxxxs</span></div>
+        </div>
+        
+        <ul class="nav-menu">
+            <li><a href="#" onclick="switchTab('makanan'); closeMenuMobile()" id="nav-makanan" class="nav-link active"><i class="fas fa-utensils"></i> Makanan</a></li>
+            <li><a href="#" onclick="switchTab('minuman'); closeMenuMobile()" id="nav-minuman" class="nav-link"><i class="fas fa-coffee"></i> Minuman</a></li>
+            <li><a href="#payment" onclick="closeMenuMobile()" class="nav-link"><i class="fas fa-wallet"></i> Pembayaran</a></li>
+            <li><a href="#location" onclick="closeMenuMobile()" class="nav-link"><i class="fas fa-location-dot"></i> Lokasi</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-wrapper">
+        
+        <div class="hero-banner">
+            <h1 class="hero-title">Faqih S.</h1>
+            <p class="hero-subtitle">Nikmati kehangatan angkringan modern dengan cita rasa autentik Cirebon. Murah, Enak, & Nyaman.</p>
+        </div>
+
+        <div id="makanan" class="menu-section active">
+            <div class="section-title"><span>Menu Makanan</span> <i class="fas fa-chevron-right" style="font-size: 1rem; opacity: 0.5;"></i></div>
+            <div id="grid-makanan" class="menu-grid active">
+                </div>
+        </div>
+
+        <div id="minuman" class="menu-section" style="display:none;">
+            <div class="section-title"><span>Menu Minuman</span> <i class="fas fa-chevron-right" style="font-size: 1rem; opacity: 0.5;"></i></div>
+            <div id="grid-minuman" class="menu-grid active">
+                </div>
+        </div>
+
+        <div id="payment" class="info-card">
+            <div class="section-title" style="margin-bottom:0.5rem;"><i class="fas fa-wallet" style="color:var(--accent-gold);"></i> Metode Pembayaran</div>
+            <p style="color:#777; margin-bottom: 2rem;">Scan QRIS atau Transfer Bank</p>
+            
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="background: #fff; border: 2px dashed #ccc; width: 200px; height: 200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; border-radius: 20px;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVJ3Q5VcPpwuzxh2l-EUBQRwGMu35REYbObQ&s" alt="QRIS" style="width: 80%; opacity: 0.8;">
+                </div>
+                <div style="margin-top: 10px; font-weight: bold; color: var(--primary-dark);">SCAN QRIS</div>
+            </div>
+
+            <div class="method-grid">
+                <div class="method-item">
+                  
+                    <i class="fas fa-wallet" style="font-size: 1.5rem; color: #008CBA; margin-bottom: 10px;"></i>
+                    <div style="font-weight:700;">DANA</div>
+                    <div style="font-size:0.85rem; color:#888;">083847013573</div>
+                </div>
+                <div class="method-item">
+                    <i class="fas fa-money-bill-wave" style="font-size: 1.5rem; color: #2d1b18; margin-bottom: 10px;"></i>
+                    <div style="font-weight:700;">Tunai</div>
+                    <div style="font-size:0.85rem; color:#888;">Bayar di Kasir</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="location" class="info-card">
+            <div class="section-title"><i class="fas fa-map-marked-alt" style="color:var(--accent-gold);"></i> Lokasi Kami</div>
+            <div class="map-frame">
+                 <iframe 
+                    src="https://maps.google.com/maps?q=Balai Desa Bulak+cirebon&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                </iframe>
+            </div>
+            <div style="margin-top: 1.5rem; color: var(--primary-dark); font-weight: 500;">
+                <i class="fas fa-location-dot" style="margin-right: 10px; color: var(--accent-gold);"></i> Jl. Angkringan No. 13, Desa bulak Arjawinangun (Depan Desa)
+            </div>
+        </div>
+
+        <footer style="text-align: center; color: #999; font-size: 0.85rem; margin-top: 3rem; padding-bottom: 2rem;">
+            © 2026 Angkringan Nuansa Premium. All rights reserved.
+        </footer>
+    </div>
+
+    <a href="https://wa.me/6283847013573?text=Halo%20Admin,%20saya%20mau%20pesan" target="_blank" class="float-wa">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script>
+        const makanan = [
+            { name: "Nasi Lengkoh", price: "5k", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs5V2yxF4dAyku_dK2aLaaFUDxdBcFwU7lYWlKCjAwLg_mQqS1dBOxYlOsUlwXc7muXPWUhRzmKaqhEpS7xD2D3mF5UTJCpwud80WdhA&s=10", best: true, rate: 5.0 },
+            { name: "Nasi Kucing Orek", price: "3k", img: "https://cdn.odzre.my.id/eqk.jpg", best: false, rate: 4.8 },
+            { name: "Sate Usus Bakar", price: "2k", img: "https://cdn.odzre.my.id/xd2.jpg", best: true, rate: 4.9 },
+            { name: "Sate Telur Puyuh", price: "3.5k", img: "https://cdn.odzre.my.id/k8n.jpg", best: false, rate: 4.7 },
+            { name: "Mendoan Panas", price: "1k", img: "https://cdn.odzre.my.id/ip4.jpg", best: false, rate: 4.8 },
+            { name: "Kepala Ayam", price: "5k", img: "https://cdn.odzre.my.id/sa8.jpg", best: true, rate: 4.9 },
+            { name: "Nasi Uduk Komplit",
+            	price: "10k", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxbCuBcRHhKASAzclo3M9yZbMECGJKwXqOljNMKAdKkm09Wbq6i1tp-mM&s=10", best: true, rate:5.0}, 
+        ];
+
+        const minuman = [
+            { name: "Wedang Jahe", price: "4k", img: "https://cdn.odzre.my.id/zmq.jpg", best: false, rate: 4.8 },
+            { name: "Es Teh Kampul", price: "3.5k", img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&q=80", best: true, rate: 4.9 },
+            { name: "Susu Jahe Merah", price: "5k", img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80", best: false, rate: 4.7 },
+        ];
+
+        function renderCards(data, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const isBest = item.best ? `<div class="badge-best"><i class="fas fa-fire"></i> TERLARIS</div>` : '';
+                const delay = index * 100; 
+                
+                const html = `
+                <div class="food-card" style="animation: fadeInDown 0.6s ease forwards; animation-delay: ${delay}ms; opacity: 0; transform: translateY(-20px);">
+                    ${isBest}
+                    <div class="card-img-box">
+                        <img src="${item.img}" alt="${item.name}" loading="lazy">
+                    </div>
+                    <div class="card-details">
+                        <div class="menu-name">${item.name}</div>
+                        <div class="menu-rating">
+                            <i class="fas fa-star"></i> ${item.rate} | Terjual 100+
+                        </div>
+                        <div class="price-row">
+                            <div class="price">${item.price}</div>
+                            <button class="btn-add" onclick="addToCart('${item.name}')">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function switchTab(type) {
+            document.getElementById('makanan').style.display = 'none';
+            document.getElementById('minuman').style.display = 'none';
+            
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(type).style.display = 'block';
+            document.getElementById('nav-' + type).classList.add('active');
+            
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // FUNGSI BARU: TOGGLE SIDEBAR MOBILE
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.menu-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Tutup menu otomatis saat link diklik (di HP)
+        function closeMenuMobile() {
+            if (window.innerWidth <= 992) {
+                toggleMenu();
+            }
+        }
+
+        function addToCart(name) {
+            alert(`✅ ${name} ditambahkan ke pesanan!\nSilakan hubungi admin via WA untuk konfirmasi.`);
+        }
+
+        // Init
+        renderCards(makanan, 'grid-makanan');
+        renderCards(minuman, 'grid-minuman');
+
+    </script>
+</body>
+</html>
